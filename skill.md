@@ -6,25 +6,34 @@ description: Informações, regras e progresso do sistema de gestão da Doceria 
 # DocesWeb - Sistema de Gestão de Confeitaria
 
 ## Objetivo do Projeto
-Transformar as planilhas do usuário ("Janeiro-2026 Atual-3") em um sistema web completo e dinâmico, facilitando o controle de caixa, fiados (CRM), vendas e estoque. O sistema é voltado para uma doceria, com métricas que ajudam a entender o faturamento rápido e recuperar valores pendentes por WhatsApp.
+Transformar as planilhas do usuário em um **Web App Progressivo (Cloud)**, focado em um Dashboard de faturamento e CRM (Gestão de Clientes). O sistema agora é lido diretamente de um link do Google Sheets e está hospedado na nuvem (Render), permitindo acesso de qualquer celular.
 
-## Tecnologias e Arquitetura
-- **Processamento de Dados**: Script em Python (`parse_data.py`) que usa `pandas` para ler e limpar as planilhas complexas em Excel.
-- **Backend API**: Servidor Flask (`vendas_api.py`) que permite o registro de novas vendas via Web diretamente no Excel.
-- **Frontend (Interface)**: HTML5, CSS3 Nativo e JavaScript para lógica de tela e gráficos (`Chart.js`).
-- **Banco de Dados**: O arquivo Excel (`.xlsx`) é a fonte da verdade. O sistema escreve nele e gera o `data.json` automaticamente.
+## Tecnologias e Arquitetura - Versão Cloud
+- **Processamento de Dados**: Script em Python (`parse_data.py`) adaptado para baixar a planilha via URL do Google Drive.
+- **Backend API**: Servidor Flask (`app.py`) configurado para o Render.com.
+- **Frontend (Interface)**: HTML5, CSS3 Premium com **foco em Mobile**.
+- **Sincronização**: Os dados são lidos da planilha Google e salvos em cache local (`data.json`) para velocidade.
+- **Hospedagem**: Repositório no GitHub (`Fsbianoms/docesweb`) conectado ao Render.com.
 
-## Telas do Sistema
-1. **Dashboard (`index.html`)**: Resumo financeiro e gráficos.
-2. **Clientes/CRM (`clientes.html`)**: Perfis de faturamento e histórico por cliente.
-3. **Vendas (`vendas.html`)**: Formulário inteligente que insere novas linhas na aba do mês correto da sua planilha Excel.
-4. **Estoque (`estoque.html`)**: *Página em construção*.
+## Telas e Funcionalidades Atuais
+1. **Dashboard 📊**: Resumo financeiro, faturamento pendente, vendas por produto e o **Ranking de Top Clientes**.
+2. **CRM / Clientes 👥**: Histórico detalhado de compras por cliente, busca inteligente e filtros por mês.
+3. **Sincronização Direta 🔗**: Botão "Planilha" no menu mobile que permite atualizar os dados colando o link do Google Sheets.
 
-## Design System (Anotações para não perder o padrão)
-- Fonte: `Inter`
-- Cores principais: Pink Doceria (`#f72585`), Purple (`#7209b7`), Mint/Success (`#0df0a3`), Warning (`#fbc116`).
-- Dark Theme com cartas (`.metric-card`, `.client-card`) em `#151b29` (com bordas suaves) e fundo principal `#0a0e17`.
-- Animações de `hover` nos botões e cartões (`transform: translateY(-5px)`).
+## Mobile & Experiência do Usuário (UX)
+- **Bottom Navigation**: Barra inferior para fácil acesso com o polegar no celular.
+- **Config Modal**: Interface simplificada para troca de link da planilha.
+- **Fuso Horário Corrigido**: Datas agora são lidas exatamente como na planilha original.
 
-## Problemas Corrigidos Recentemente
-* Sincronizado a Sidebar (menu lateral) em todas as páginas e links corrigidos, arrumando o bug onde botões perdiam o estado ou o nome "CRM" sumia do menu ao ir para a index.
+## Design System (Padrão Visual)
+- **Cores**: Pink Doceria (`#f72585`), Mint (`#0df0a3`), Gold Ranking (`#ffd700`).
+- **Dark Mode**: Fundo `#0a0e17` com cartões translúcidos e bordas sutis.
+- **Tipografia**: `Inter` (Google Fonts).
+
+## Últimas Atualizações Realizadas
+- [x] Migração para Modo Leitura (Dashboard/CRM).
+- [x] Sincronização dinâmica via Link do Google Sheets.
+- [x] Deployment no GitHub e Render.com.
+- [x] Implementação do Ranking de Melhores Clientes.
+- [x] Correção de datas e Fuso Horário.
+- [x] Layout 100% responsivo (estilo App).
