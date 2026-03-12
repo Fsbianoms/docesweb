@@ -32,43 +32,73 @@ async function loadData() {
             updateDashboard(e.target.value);
         });
 
-        // Lógica do botão Sync
+        // Lógica de Sincronização Unificada
+        const syncData = async (url) => {
+            if (url) localStorage.setItem('sheetUrl', url);
+            
+            const btnSidebar = document.getElementById('syncBtn');
+            const btnModal = document.getElementById('syncBtnModal');
+            const btns = [btnSidebar, btnModal].filter(b => b);
+            
+            btns.forEach(b => {
+                b.disabled = true;
+                b.dataset.oldHtml = b.innerHTML;
+                b.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ...';
+            });
+
+            try {
+                const response = await fetch('/api/sync', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Dados atualizados com sucesso!');
+                    location.reload();
+                } else {
+                    alert('❌ Erro: ' + (result.details || result.message));
+                }
+            } catch (e) {
+                alert('❌ Erro de conexão com o servidor.');
+            } finally {
+                btns.forEach(b => {
+                    b.disabled = false;
+                    b.innerHTML = b.dataset.oldHtml;
+                });
+            }
+        };
+
         const urlInput = document.getElementById('sheetUrlInput');
+        const urlInputModal = document.getElementById('sheetUrlInputModal');
         const savedUrl = localStorage.getItem('sheetUrl');
-        if (savedUrl && urlInput) urlInput.value = savedUrl;
+        
+        if (savedUrl) {
+            if (urlInput) urlInput.value = savedUrl;
+            if (urlInputModal) urlInputModal.value = savedUrl;
+        }
 
-        document.getElementById('syncBtn').addEventListener('click', async () => {
-             const btn = document.getElementById('syncBtn');
-             const url = document.getElementById('sheetUrlInput')?.value;
-             
-             if (url) {
-                 localStorage.setItem('sheetUrl', url);
-             }
+        // Eventos de clique
+        document.getElementById('syncBtn')?.addEventListener('click', () => syncData(urlInput?.value));
+        document.getElementById('syncBtnModal')?.addEventListener('click', () => syncData(urlInputModal?.value));
 
-             const originalHtml = btn.innerHTML;
-             btn.disabled = true;
-             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ...';
+        // Lógica do Modal de Configuração
+        const modal = document.getElementById('configModal');
+        const openBtn = document.getElementById('openConfigBtn');
+        const closeBtn = document.getElementById('closeConfigModal');
 
-             try {
-                 const response = await fetch('/api/sync', { 
-                     method: 'POST',
-                     headers: { 'Content-Type': 'application/json' },
-                     body: JSON.stringify({ url: url })
-                 });
-                 const result = await response.json();
-                 
-                 if (result.success) {
-                     alert('✅ ' + result.message);
-                     location.reload();
-                 } else {
-                     alert('❌ ' + result.message);
-                 }
-             } catch (error) {
-                 alert('❌ Erro de conexão.');
-             } finally {
-                 btn.disabled = false;
-                 btn.innerHTML = originalHtml;
-             }
+        openBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.style.display = 'flex';
+        });
+
+        closeBtn?.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target == modal) modal.style.display = 'none';
         });
 
     } catch (error) {

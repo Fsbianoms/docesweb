@@ -246,23 +246,19 @@ window.onclick = function(event) {
     }
 };
 
-// Lógica de Sincronização (Sidebar)
-const urlInput = document.getElementById('sheetUrlInput');
-const savedUrl = localStorage.getItem('sheetUrl');
-if (savedUrl && urlInput) urlInput.value = savedUrl;
-
-document.getElementById('syncBtn').addEventListener('click', async () => {
-    const btn = document.getElementById('syncBtn');
-    if (!btn) return;
-    const url = document.getElementById('sheetUrlInput')?.value;
+// Lógica de Sincronização Unificada
+const syncData = async (url) => {
+    if (url) localStorage.setItem('sheetUrl', url);
     
-    if (url) {
-        localStorage.setItem('sheetUrl', url);
-    }
-
-    const originalHtml = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ...';
+    const btnSidebar = document.getElementById('syncBtn');
+    const btnModal = document.getElementById('syncBtnModal');
+    const btns = [btnSidebar, btnModal].filter(b => b);
+    
+    btns.forEach(b => {
+        b.disabled = true;
+        b.dataset.oldHtml = b.innerHTML;
+        b.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ...';
+    });
 
     try {
         const response = await fetch('/api/sync', { 
@@ -271,18 +267,53 @@ document.getElementById('syncBtn').addEventListener('click', async () => {
             body: JSON.stringify({ url: url })
         });
         const result = await response.json();
+        
         if (result.success) {
-            alert('✅ ' + result.message);
+            alert('✅ Dados atualizados com sucesso!');
             location.reload();
         } else {
-            alert('❌ ' + result.message);
+            alert('❌ Erro: ' + (result.details || result.message));
         }
-    } catch (error) {
-        alert('❌ Erro de conexão.');
+    } catch (e) {
+        alert('❌ Erro de conexão com o servidor.');
     } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalHtml;
+        btns.forEach(b => {
+            b.disabled = false;
+            b.innerHTML = b.dataset.oldHtml;
+        });
     }
+};
+
+const urlInput = document.getElementById('sheetUrlInput');
+const urlInputModal = document.getElementById('sheetUrlInputModal');
+const savedUrl = localStorage.getItem('sheetUrl');
+
+if (savedUrl) {
+    if (urlInput) urlInput.value = savedUrl;
+    if (urlInputModal) urlInputModal.value = savedUrl;
+}
+
+// Eventos de clique
+document.getElementById('syncBtn')?.addEventListener('click', () => syncData(urlInput?.value));
+document.getElementById('syncBtnModal')?.addEventListener('click', () => syncData(urlInputModal?.value));
+
+// Lógica do Modal de Configuração
+const configModal = document.getElementById('configModal');
+const openConfigBtn = document.getElementById('openConfigBtn');
+const closeConfigBtn = document.getElementById('closeConfigModal');
+
+openConfigBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    configModal.style.display = 'flex';
+});
+
+closeConfigBtn?.addEventListener('click', () => {
+    configModal.style.display = 'none';
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target == configModal) configModal.style.display = 'none';
+    if (e.target == document.getElementById('historyModal')) document.getElementById('historyModal').style.display = 'none';
 });
 
 loadClientes();
