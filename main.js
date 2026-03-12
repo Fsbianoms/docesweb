@@ -163,8 +163,18 @@ function updateDashboard(mesBase) {
     // 3. Atualizar Tabela (mostrar apenas as últimas 15)
     updateTable(filteredData);
 
-    // 4. Atualizar Gráficos
-    updateCharts(productSalesMap, statusMap);
+    // 4. Calcular Ranking de Clientes
+    let customerSalesMap = {};
+    filteredData.forEach(sale => {
+        if (sale.cliente && sale.cliente !== "Desconhecido") {
+            if (!customerSalesMap[sale.cliente]) customerSalesMap[sale.cliente] = 0;
+            customerSalesMap[sale.cliente] += sale.valor;
+        }
+    });
+
+    // 5. Atualizar Gráficos e Ranking
+    updateCharts(productSalesMap);
+    updateRanking(customerSalesMap);
 }
 
 // Atualizar Tabela
@@ -198,7 +208,7 @@ function updateTable(data) {
 }
 
 // Atualizar Gráficos (Chart.js)
-function updateCharts(productMap, statusMap) {
+function updateCharts(productMap) {
     // Config global para Chart.js combinar com dark mode
     Chart.defaults.color = '#8b9bb4';
     Chart.defaults.font.family = 'Inter';
@@ -246,36 +256,42 @@ function updateCharts(productMap, statusMap) {
             }
         }
     });
+}
 
-    /** Gráfico de Status (Rosca/Doughnut) **/
-    const statusCtx = document.getElementById('statusChart').getContext('2d');
-    
-    if (statusChartInst) {
-        statusChartInst.destroy();
+// Renderizar Ranking de Clientes
+function updateRanking(customerMap) {
+    const rankingList = document.getElementById('customerRanking');
+    rankingList.innerHTML = '';
+
+    const sortedCustomers = Object.entries(customerMap)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5); // Top 5
+
+    if (sortedCustomers.length === 0) {
+        rankingList.innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 2rem;">Nenhum dado para este mês.</p>';
+        return;
     }
 
-    statusChartInst = new Chart(statusCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Recebido (Pago)', 'A Receber (Pendente)'],
-            datasets: [{
-                data: [statusMap['PAGO'], statusMap['PENDENTE']],
-                backgroundColor: ['#0df0a3', '#fbc116'],
-                borderWidth: 0,
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '70%',
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: { padding: 20 }
-                }
-            }
-        }
+    const maxSpent = sortedCustomers[0][1];
+
+    sortedCustomers.forEach((item, index) => {
+        const name = item[0];
+        const value = item[1];
+        const percentage = (value / maxSpent) * 100;
+
+        const rankDiv = document.createElement('div');
+        rankDiv.className = `ranking-item rank-${index + 1}`;
+        rankDiv.innerHTML = `
+            <div class="rank-number">${index + 1}</div>
+            <div class="rank-info">
+                <div class="rank-name">${name}</div>
+                <div class="rank-bar-bg">
+                    <div class="rank-bar-fill" style="width: ${percentage}%"></div>
+                </div>
+            </div>
+            <div class="rank-value">${formatCurrency(value)}</div>
+        `;
+        rankingList.appendChild(rankDiv);
     });
 }
 

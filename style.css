@@ -288,6 +288,75 @@ body {
     width: 100%;
 }
 
+/* Ranking List */
+.ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: 0.3s;
+}
+
+.ranking-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(5px);
+}
+
+.rank-number {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: var(--bg-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.rank-1 .rank-number { background: #ffd700; color: #000; }
+.rank-2 .rank-number { background: #c0c0c0; color: #000; }
+.rank-3 .rank-number { background: #cd7f32; color: #000; }
+
+.rank-info {
+    flex-grow: 1;
+}
+
+.rank-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.rank-bar-bg {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.rank-bar-fill {
+    height: 100%;
+    background: var(--grad-3);
+    border-radius: 10px;
+    transition: width 1s ease-in-out;
+}
+
+.rank-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--success);
+}
+
 /* Recent Sales Table */
 .recent-sales {
     background: var(--bg-card);
