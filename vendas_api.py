@@ -6,7 +6,7 @@ import os
 import datetime
 import math
 
-app = Flask(__name__, static_folder='.')
+app = Flask(__name__, static_folder=os.getcwd(), static_url_path='')
 CORS(app)
 
 EXCEL_FILE = "Estou compartilhando o arquivo 'Janeiro-2026 Atual-3' com você.xlsx"
