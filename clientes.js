@@ -8,10 +8,23 @@ const formatCurrency = (value) => {
 };
 
 // Formatar data
+// Formatar data (Corrige o problema de diminuir 1 dia ou mudar devido ao fuso)
 const formatDate = (dateStr) => {
-    if (!dateStr || dateStr === "nan") return "-";
+    if (!dateStr || dateStr === "nan" || dateStr === "") return "-";
+    
+    // Se a data vier no formato ISO (YYYY-MM-DD...), pegamos só a parte da data
+    if (typeof dateStr === 'string' && dateStr.includes('-')) {
+        const parts = dateStr.split('T')[0].split('-');
+        if (parts.length === 3) {
+            // Retorna DD/MM/YYYY diretamente
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+    }
+    
     const date = new Date(dateStr);
     if (isNaN(date)) return dateStr;
+    
+    // Fallback caso não seja o formato esperado
     return new Intl.DateTimeFormat('pt-BR').format(date);
 };
 
