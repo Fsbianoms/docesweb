@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doces Dashboard - Estoque</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-candy-cane logo-icon"></i>
+                <h2>DocesWeb</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="vendas.html" class="nav-item"><i class="fa-solid fa-clipboard-list"></i> Vendas</a>
+                <a href="estoque.html" class="nav-item active"><i class="fa-solid fa-box-open"></i> Estoque</a>
+                <a href="clientes.html" class="nav-item"><i class="fa-solid fa-users"></i> Clientes (CRM)</a>
+            </nav>
+            
+            <div style="margin-top: auto; padding-top: 1rem;">
+                <label style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; display: block;">Link da Planilha Google:</label>
+                <input type="text" id="sheetUrlInput" placeholder="Cole o link aqui..." style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: white; font-size: 0.8rem; margin-bottom: 0.5rem; outline: none;">
+                <button id="syncBtn" class="nav-item" style="background: rgba(13, 240, 163, 0.1); border: 1px solid rgba(13, 240, 163, 0.2); color: var(--success); cursor: pointer; width: 100%; text-align: left; font-size: 0.9rem; font-family: inherit;">
+                    <i class="fa-solid fa-sync"></i> Sincronizar Excel
+                </button>
+            </div>
+            <div class="user-profile">
+                <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                <div>
+                    <h4>Administrador</h4>
+                    <p>admin@doces.com</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>Estoque</h1>
+                    <p class="subtitle">Controle de insumos e doces a pronta entrega.</p>
+                </div>
+            </header>
+
+            <div style="text-align: center; margin-top: 5rem; color: var(--text-muted);">
+                <i class="fa-solid fa-box-open" style="font-size: 4rem; margin-bottom: 1rem; color: var(--success);"></i>
+                <h2>Página em Construção</h2>
+                <p>Nesta área você fará o registro de doces produzidos, reposições e validade.</p>
+            </div>
+        </main>
+    </div>
+    <script src="./estoque.js"></script>
+</body>
+</html>

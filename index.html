@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doces Dashboard - Gestão de Vendas</title>
+    <meta name="description" content="Dashboard de gerenciamento de vendas para loja de doces.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-candy-cane logo-icon"></i>
+                <h2>DocesWeb</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="clientes.html" class="nav-item"><i class="fa-solid fa-users"></i> Clientes (CRM)</a>
+            </nav>
+            
+            <div style="margin-top: auto; padding-top: 1rem;">
+                <label style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; display: block;">Link da Planilha Google:</label>
+                <input type="text" id="sheetUrlInput" placeholder="Cole o link aqui..." style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: white; font-size: 0.8rem; margin-bottom: 0.5rem; outline: none;">
+                <button id="syncBtn" class="nav-item" style="background: rgba(13, 240, 163, 0.1); border: 1px solid rgba(13, 240, 163, 0.2); color: var(--success); cursor: pointer; width: 100%; text-align: left; font-size: 0.9rem; font-family: inherit;">
+                    <i class="fa-solid fa-sync"></i> Sincronizar Excel
+                </button>
+            </div>
+            <div class="user-profile">
+                <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                <div>
+                    <h4>Administrador</h4>
+                    <p>admin@doces.com</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>Visão Geral</h1>
+                    <p class="subtitle">Acompanhe os resultados da sua confeitaria</p>
+                </div>
+                <div class="header-right">
+                    <div class="month-filter">
+                        <label for="monthSelect">Mês de Referência:</label>
+                        <select id="monthSelect">
+                            <option value="Todos">Todos os Meses</option>
+                            <option value="Janeiro">Janeiro</option>
+                            <option value="Fevereiro">Fevereiro</option>
+                            <option value="Março">Março</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+
+            <section class="metrics-grid">
+                <div class="metric-card gradient-1">
+                    <div class="metric-icon"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="metric-info">
+                        <h3>Receita Total (Paga)</h3>
+                        <p id="totalRevenue">R$ 0,00</p>
+                    </div>
+                </div>
+                <div class="metric-card gradient-2">
+                    <div class="metric-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                    <div class="metric-info">
+                        <h3>Valores Pendentes</h3>
+                        <p id="totalPending">R$ 0,00</p>
+                    </div>
+                </div>
+                <div class="metric-card gradient-3">
+                    <div class="metric-icon"><i class="fa-solid fa-cookie-bite"></i></div>
+                    <div class="metric-info">
+                        <h3>Doce Mais Vendido</h3>
+                        <p id="topProduct">-</p>
+                    </div>
+                </div>
+                <div class="metric-card gradient-4">
+                    <div class="metric-icon"><i class="fa-solid fa-shopping-bag"></i></div>
+                    <div class="metric-info">
+                        <h3>Total de Vendas</h3>
+                        <p id="totalSales">0 unid.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="charts-section">
+                <div class="chart-container">
+                    <h3>Vendas por Produto (Unidades)</h3>
+                    <div class="canvas-wrapper">
+                        <canvas id="productChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Status de Pagamentos</h3>
+                    <div class="canvas-wrapper">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="recent-sales">
+                <div class="table-header">
+                    <h3>Vendas Recentes</h3>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Cliente</th>
+                                <th>Produto</th>
+                                <th>Quantidade</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesTableBody">
+                            <!-- Dynamic Rows Here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+</html>
