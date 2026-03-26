@@ -84,6 +84,7 @@ def add_sale():
                         elif 'Valor' in val: col_map['valor'] = c
                         elif 'Status' in val: col_map['status'] = c
                         elif 'Data da Venda' in val: col_map['data_venda'] = c
+                        elif 'Contato' in val: col_map['contato'] = c
                     break
             
             next_row = header_row + 1
@@ -91,6 +92,8 @@ def add_sale():
                 next_row += 1
             
             sheet.cell(row=next_row, column=col_map['cliente']).value = data.get('cliente')
+            if 'contato' in col_map:
+                sheet.cell(row=next_row, column=col_map['contato']).value = data.get('contato')
             sheet.cell(row=next_row, column=col_map['produto']).value = data.get('produto')
             sheet.cell(row=next_row, column=col_map['quantidade']).value = data.get('quantidade')
             sheet.cell(row=next_row, column=col_map['valor']).value = float(data.get('valor'))

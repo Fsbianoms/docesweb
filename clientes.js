@@ -79,6 +79,7 @@ function processCrmData(sales) {
         if (!clientMap[sale.cliente]) {
             clientMap[sale.cliente] = {
                 nome: sale.cliente,
+                contato: sale.contato || "",
                 totalGasto: 0,
                 totalPendente: 0,
                 compras: 0,
@@ -88,6 +89,11 @@ function processCrmData(sales) {
         }
 
         const client = clientMap[sale.cliente];
+        
+        // Atualiza contato se encontrar um preenchido (caso em algumas linhas esteja vazio)
+        if (sale.contato && !client.contato) {
+            client.contato = sale.contato;
+        }
         
         // Adicionar ao histórico
         client.historico.push({
@@ -201,7 +207,7 @@ function renderCrmGrid(clients) {
             </div>
 
             <div class="action-buttons">
-                <button class="btn-icon btn-whatsapp" onclick="window.open('https://wa.me/?text=${encodedMsg}', '_blank')">
+                <button class="btn-icon btn-whatsapp" onclick="window.open('https://wa.me/${client.contato.replace(/\D/g, '')}?text=${encodedMsg}', '_blank')">
                     <i class="fa-brands fa-whatsapp"></i> Contato
                 </button>
                 <button class="btn-icon btn-details" onclick="openHistory('${client.nome.replace(/'/g, "\\'")}')">

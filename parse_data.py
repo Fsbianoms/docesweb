@@ -79,6 +79,7 @@ try:
             elif 'Valor' in col_name: col_map['valor'] = idx
             elif 'Status' in col_name: col_map['status'] = idx
             elif 'Data da Venda' in col_name: col_map['data_venda'] = idx
+            elif 'Contato' in col_name: col_map['contato'] = idx
         
         for i in range(header_idx + 1, len(df)):
             row = df.iloc[i]
@@ -86,6 +87,7 @@ try:
                 continue
             
             cliente = str(row[col_map['cliente']]) if 'cliente' in col_map and not is_nan(row[col_map['cliente']]) else "Desconhecido"
+            contato = str(row[col_map['contato']]) if 'contato' in col_map and not is_nan(row[col_map['contato']]) else ""
             produto = str(row[col_map['produto']]) if 'produto' in col_map and not is_nan(row[col_map['produto']]) else "Desconhecido"
             quantidade = row[col_map['quantidade']] if 'quantidade' in col_map else 0
             try: quantidade = float(quantidade)
@@ -105,6 +107,7 @@ try:
             all_sales.append({
                 "mes": sheet_name,
                 "cliente": cliente,
+                "contato": contato,
                 "produto": produto,
                 "quantidade": int(float(quantidade)) if not is_nan(quantidade) else 0,
                 "valor": float(valor) if not is_nan(valor) else 0.0,

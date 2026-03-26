@@ -4,6 +4,7 @@ document.getElementById('vendaForm').addEventListener('submit', async (e) => {
     const formData = new FormData(e.target);
     const data = {
         cliente: formData.get('cliente'),
+        contato: formData.get('contato'),
         produto: formData.get('produto'),
         quantidade: parseInt(formData.get('quantidade')),
         valor: parseFloat(formData.get('valor')),

@@ -18,7 +18,8 @@ Transformar as planilhas do usuário em um **Web App Progressivo (Cloud)**, foca
 ## Telas e Funcionalidades Atuais
 1. **Dashboard 📊**: Resumo financeiro, faturamento pendente, vendas por produto e o **Ranking de Top Clientes**.
 2. **CRM / Clientes 👥**: Histórico detalhado de compras por cliente, busca inteligente e filtros por mês.
-3. **Sincronização Direta 🔗**: Botão "Planilha" no menu mobile que permite atualizar os dados colando o link do Google Sheets.
+3. **Contato WhatsApp 💬**: Integração direta com o número do cliente para cobranças ou promoções pelo CRM.
+4. **Sincronização Direta 🔗**: Botão "Planilha" no menu mobile que permite atualizar os dados colando o link do Google Sheets.
 
 ## Mobile & Experiência do Usuário (UX)
 - **Bottom Navigation**: Barra inferior para fácil acesso com o polegar no celular.
@@ -37,3 +38,6 @@ Transformar as planilhas do usuário em um **Web App Progressivo (Cloud)**, foca
 - [x] Implementação do Ranking de Melhores Clientes.
 - [x] Correção de datas e Fuso Horário.
 - [x] Layout 100% responsivo (estilo App).
+- [x] Implementação da coluna **"Contato"** (WhatsApp).
+- [x] Integração de envio de mensagens diretas pelo CRM.
+- [x] Registro de novas vendas agora inclui o contato do cliente na planilha.
