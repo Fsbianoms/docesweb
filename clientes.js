@@ -158,6 +158,25 @@ function processCrmData(sales) {
     }
 }
 
+function handleWhatsApp(name, contact) {
+    if (!contact || contact.trim() === "") {
+        alert(`O contato de ${name} não foi encontrado. Certifique-se de que o número está na coluna "Contato" ou "Observações" da planilha e clique em Sincronizar.`);
+        return;
+    }
+
+    const client = allClients.find(c => c.nome === name);
+    let waMsg = '';
+    if (client && client.totalPendente > 0) {
+        waMsg = `Olá ${client.nome}, tudo bem? Passando para lembrar do seu docinho! Consta aqui um valor pendente de ${formatCurrency(client.totalPendente)} referentes às suas últimas compras de doces. Podemos acertar? 🍬`;
+    } else {
+        waMsg = `Olá ${name}! Percebi que temos novidades na doceria, venha conferir! 🎂`;
+    }
+
+    const encodedMsg = encodeURIComponent(waMsg);
+    const cleanContact = contact.replace(/\D/g, '');
+    window.open(`https://wa.me/${cleanContact}?text=${encodedMsg}`, '_blank');
+}
+
 function renderCrmGrid(clients) {
     const grid = document.getElementById('crmGrid');
     grid.innerHTML = '';
@@ -207,7 +226,7 @@ function renderCrmGrid(clients) {
             </div>
 
             <div class="action-buttons">
-                <button class="btn-icon btn-whatsapp" onclick="window.open('https://wa.me/${client.contato.replace(/\D/g, '')}?text=${encodedMsg}', '_blank')">
+                <button class="btn-icon btn-whatsapp" onclick="handleWhatsApp('${client.nome.replace(/'/g, "\\'")}', '${client.contato}')">
                     <i class="fa-brands fa-whatsapp"></i> Contato
                 </button>
                 <button class="btn-icon btn-details" onclick="openHistory('${client.nome.replace(/'/g, "\\'")}')">

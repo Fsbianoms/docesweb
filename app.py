@@ -77,14 +77,15 @@ def add_sale():
                 if 'Cliente' in row_values:
                     header_row = r
                     for c in range(1, sheet.max_column + 1):
-                        val = str(sheet.cell(row=r, column=c).value).strip() if sheet.cell(row=r, column=c).value else ""
-                        if 'Cliente' in val: col_map['cliente'] = c
-                        elif 'Produto' in val: col_map['produto'] = c
-                        elif 'Quantidade' in val: col_map['quantidade'] = c
-                        elif 'Valor' in val: col_map['valor'] = c
-                        elif 'Status' in val: col_map['status'] = c
-                        elif 'Data da Venda' in val: col_map['data_venda'] = c
-                        elif 'Contato' in val: col_map['contato'] = c
+                        val_lower = str(sheet.cell(row=r, column=c).value).strip().lower() if sheet.cell(row=r, column=c).value else ""
+                        if 'cliente' in val_lower: col_map['cliente'] = c
+                        elif 'produto' in val_lower: col_map['produto'] = c
+                        elif 'quant' in val_lower: col_map['quantidade'] = c
+                        elif 'valor' in val_lower: col_map['valor'] = c
+                        elif 'status' in val_lower: col_map['status'] = c
+                        elif 'data da venda' in val_lower: col_map['data_venda'] = c
+                        elif 'contato' in val_lower: col_map['contato'] = c
+                        elif 'observ' in val_lower and 'contato' not in col_map: col_map['contato'] = c
                     break
             
             next_row = header_row + 1

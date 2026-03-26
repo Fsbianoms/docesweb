@@ -10,7 +10,7 @@ import sys
 warnings.simplefilter(action='ignore', category=UserWarning)
 
 # Link padrão (usado caso não venha argumento)
-DEFAULT_URL = "https://docs.google.com/spreadsheets/d/1uRTFD_fjpih_4xghJF34fYgrVPPrjpqe/export?format=xlsx"
+DEFAULT_URL = "https://docs.google.com/spreadsheets/d/15bW8mxfES9LwfoWV8TeQxXMqwO6DJoLY/export?format=xlsx"
 # Backup local
 file_path = "Estou compartilhando o arquivo 'Janeiro-2026 Atual-3' com você.xlsx"
 
@@ -33,21 +33,28 @@ def is_nan(value):
 all_sales = []
 
 try:
-    print(f"Buscando dados no link: {EXCEL_URL[:50]}...")
+    print(f"Buscando dados no link: {EXCEL_URL[:60]}...")
     try:
-        response = requests.get(EXCEL_URL, timeout=15)
+        # Tenta baixar o arquivo do Google Drive
+        response = requests.get(EXCEL_URL, timeout=30)
         if response.status_code == 200:
-            excel_content = io.BytesIO(response.content)
-            xls = pd.ExcelFile(excel_content)
+            print("Download bem-sucedido. Atualizando cache local...")
+            with open(file_path, 'wb') as f:
+                f.write(response.content)
+            xls = pd.ExcelFile(file_path)
             source = "Google Drive (Link dinâmico)"
         else:
-            print(f"Erro ao acessar link (Status {response.status_code}). Usando arquivo local.")
+            print(f"Aviso: Link retornou erro {response.status_code}. Usando arquivo local.")
             xls = pd.ExcelFile(file_path)
             source = "Local"
     except Exception as e:
-        print(f"Erro de conexão: {e}. Usando arquivo local.")
-        xls = pd.ExcelFile(file_path)
-        source = "Local"
+        print(f"Aviso: Falha na conexão ({e}). Usando arquivo local.")
+        if os.path.exists(file_path):
+            xls = pd.ExcelFile(file_path)
+            source = "Local"
+        else:
+            print("Erro Crítico: Nenhum arquivo local encontrado e falha no download.")
+            sys.exit(1)
 
     for sheet_name in xls.sheet_names:
         # Pula abas irrelevantes
@@ -55,31 +62,35 @@ try:
         if not any(month in sheet_name for month in month_keywords):
             continue
             
-        df = pd.read_excel(xls, sheet_name=sheet_name, header=None)
+        # Otimização: Pegar apenas as primeiras 20 linhas para achar o cabeçalho
+        sample_df = pd.read_excel(xls, sheet_name=sheet_name, header=None, nrows=20)
         
-        # Encontrar a linha de cabeçalho
         header_idx = -1
-        for i, row in df.iterrows():
-            row_str = [str(x).strip() for x in row.values]
-            if 'Cliente' in row_str:
+        for i, row in sample_df.iterrows():
+            row_str = [str(x).strip().lower() for x in row.values if x is not None]
+            if 'cliente' in row_str:
                 header_idx = i
                 break
         
         if header_idx == -1:
             continue
             
+        # Agora ler a planilha completa se o cabeçalho foi achado
+        df = pd.read_excel(xls, sheet_name=sheet_name, header=None)
+            
         headers = df.iloc[header_idx].values
         col_map = {}
         for idx, col_name in enumerate(headers):
             if is_nan(col_name) or not isinstance(col_name, str): continue
-            col_name = col_name.strip()
-            if 'Cliente' in col_name: col_map['cliente'] = idx
-            elif 'Produto' in col_name: col_map['produto'] = idx
-            elif 'Quantidade' in col_name: col_map['quantidade'] = idx
-            elif 'Valor' in col_name: col_map['valor'] = idx
-            elif 'Status' in col_name: col_map['status'] = idx
-            elif 'Data da Venda' in col_name: col_map['data_venda'] = idx
-            elif 'Contato' in col_name: col_map['contato'] = idx
+            col_name_lower = col_name.strip().lower()
+            if 'cliente' in col_name_lower: col_map['cliente'] = idx
+            elif 'produto' in col_name_lower: col_map['produto'] = idx
+            elif 'quant' in col_name_lower: col_map['quantidade'] = idx
+            elif 'valor' in col_name_lower: col_map['valor'] = idx
+            elif 'status' in col_name_lower: col_map['status'] = idx
+            elif 'data da venda' in col_name_lower: col_map['data_venda'] = idx
+            elif 'contato' in col_name_lower: col_map['contato'] = idx
+            elif 'observ' in col_name_lower and 'contato' not in col_map: col_map['contato'] = idx
         
         for i in range(header_idx + 1, len(df)):
             row = df.iloc[i]
@@ -88,6 +99,27 @@ try:
             
             cliente = str(row[col_map['cliente']]) if 'cliente' in col_map and not is_nan(row[col_map['cliente']]) else "Desconhecido"
             contato = str(row[col_map['contato']]) if 'contato' in col_map and not is_nan(row[col_map['contato']]) else ""
+            # Limpa o contato para ter apenas números
+            if contato:
+                contato = "".join(filter(str.isdigit, contato))
+                # Se começar com 0, remove
+                if contato.startswith("0"): contato = contato[1:]
+                
+                # Se tiver 8 ou 9 dígitos, assume que é do DDD 67
+                if len(contato) <= 9 and not contato.startswith("67"):
+                    if len(contato) == 8: contato = "9" + contato
+                    contato = "67" + contato
+                
+                # Se tiver 10 ou 11 dígitos, assume que falta o 55
+                if len(contato) in [10, 11] and not contato.startswith("55"):
+                    # Se tiver 10 dígitos (DDD + 8), adiciona o 9 extra se for celular (quase todos em BR)
+                    if len(contato) == 10:
+                        contato = contato[:2] + "9" + contato[2:]
+                    contato = "55" + contato
+                
+                # Se tiver 13 dígitos e começar com 55, está completo
+                # Se tiver menos que isso mas parece BR, tentamos completar
+            
             produto = str(row[col_map['produto']]) if 'produto' in col_map and not is_nan(row[col_map['produto']]) else "Desconhecido"
             quantidade = row[col_map['quantidade']] if 'quantidade' in col_map else 0
             try: quantidade = float(quantidade)
