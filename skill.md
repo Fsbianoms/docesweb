@@ -38,6 +38,9 @@ Transformar as planilhas do usuário em um **Web App Progressivo (Cloud)**, foca
 - [x] Implementação do Ranking de Melhores Clientes.
 - [x] Correção de datas e Fuso Horário.
 - [x] Layout 100% responsivo (estilo App).
-- [x] Implementação da coluna **"Contato"** (WhatsApp).
-- [x] Integração de envio de mensagens diretas pelo CRM.
+- [x] Implementação da coluna **"Contato"** (WhatsApp) com busca inteligente (Case-insensitive).
+- [x] Suporte a **Fallback automático**: se não houver a coluna "Contato", o sistema busca números na coluna "Observações".
+- [x] **Limpeza Programada**: Remoção automática de caracteres especiais e adição do código 55 (Brasil) e 67 (MS).
+- [x] Sincronização robusta com cache local (usando dados antigos se o Google Drive falhar).
+- [x] Mensagens de aviso no CRM quando o lead não possui contato cadastrado.
 - [x] Registro de novas vendas agora inclui o contato do cliente na planilha.
