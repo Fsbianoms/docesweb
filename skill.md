@@ -19,7 +19,8 @@ Transformar as planilhas do usuário em um **Web App Progressivo (Cloud)**, foca
 1. **Dashboard 📊**: Resumo financeiro, faturamento pendente, vendas por produto e o **Ranking de Top Clientes**.
 2. **CRM / Clientes 👥**: Histórico detalhado de compras por cliente, busca inteligente e filtros por mês.
 3. **Contato WhatsApp 💬**: Integração direta com o número do cliente para cobranças ou promoções pelo CRM.
-4. **Sincronização Direta 🔗**: Botão "Planilha" no menu mobile que permite atualizar os dados colando o link do Google Sheets.
+4. **Agente de IA (CRM Analyst) 🤖**: Camada de inteligência que analisa o comportamento do cliente e sugere quem abordar para aumentar as vendas.
+5. **Sincronização Direta 🔗**: Botão "Planilha" no menu mobile que permite atualizar os dados colando o link do Google Sheets.
 
 ## Mobile & Experiência do Usuário (UX)
 - **Bottom Navigation**: Barra inferior para fácil acesso com o polegar no celular.
@@ -44,3 +45,5 @@ Transformar as planilhas do usuário em um **Web App Progressivo (Cloud)**, foca
 - [x] Sincronização robusta com cache local (usando dados antigos se o Google Drive falhar).
 - [x] Mensagens de aviso no CRM quando o lead não possui contato cadastrado.
 - [x] Registro de novas vendas agora inclui o contato do cliente na planilha.
+- [x] **Agente de Inteligência de Vendas (CRM Analyst)** integrado ao CRM.
+- [x] **Resiliência do Front**: Mensagens de erro amigáveis se o arquivo de dados estiver ausente.
