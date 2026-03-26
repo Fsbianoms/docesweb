@@ -158,7 +158,75 @@ function processCrmData(sales) {
     }
 }
 
-function handleWhatsApp(name, contact) {
+function runAiAnalysis() {
+    const banner = document.getElementById('aiBanner');
+    const grid = document.getElementById('aiGrid');
+    banner.style.display = 'block';
+    grid.innerHTML = '<p style="grid-column: 1/-1; padding: 1rem; color: var(--text-muted)">Analisando comportamentos e histórico de compras...</p>';
+
+    // Simulação de processamento inteligente
+    setTimeout(() => {
+        grid.innerHTML = '';
+        const today = new Date();
+        const suggestions = [];
+
+        allClients.forEach(client => {
+            // Pegar a data da última compra
+            const dates = client.historico.map(h => new Date(h.data));
+            if (dates.length === 0) return;
+            const lastPurchaseDate = new Date(Math.max(...dates));
+            const diffTime = Math.abs(today - lastPurchaseDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            // CRITÉRIO 1: Risco de Churn (Sumiu há mais de 15 dias)
+            if (diffDays > 15) {
+                suggestions.push({
+                    name: client.nome,
+                    reason: `Não compra há ${diffDays} dias. Provável saudade de um doce!`,
+                    type: 'Risco de Perda',
+                    contact: client.contato,
+                    msg: `Oi ${client.nome}, tudo bem? Faz um tempinho que não te vejo por aqui! Passando para te contar que temos docinhos frescos hoje... que tal um ${client.produtoFavorito}? 🍬`
+                });
+            }
+
+            // CRITÉRIO 2: VIP (Gasto alto) sem pendência
+            if (client.totalGasto > 100 && client.totalPendente === 0 && suggestions.length < 6) {
+                const alreadyAdded = suggestions.find(s => s.name === client.nome);
+                if (!alreadyAdded) {
+                    suggestions.push({
+                        name: client.nome,
+                        reason: `Cliente VIP com faturamento alto. Dê um mimo no próximo pedido!`,
+                        type: 'Fidelização',
+                        contact: client.contato,
+                        msg: `Oi ${client.nome}! Como você é um de nossos clientes favoritos, no seu próximo pedido de ${client.produtoFavorito} vou te enviar um brinde especial! 🎁`
+                    });
+                }
+            }
+        });
+
+        if (suggestions.length === 0) {
+            grid.innerHTML = '<p style="grid-column: 1/-1; padding: 2rem; color: var(--text-muted); text-align: center;">Todos os seus clientes estão ativos e felizes! Bom trabalho! 🎉</p>';
+            return;
+        }
+
+        // Mostrar top 6 oportunidades
+        suggestions.sort((a, b) => b.type.length - a.type.length).slice(0, 6).forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'ai-card';
+            card.innerHTML = `
+                <h4 style="margin-bottom: 0.2rem;">${s.name}</h4>
+                <div style="font-size: 0.7rem; color: var(--primary-color); font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase;">${s.type}</div>
+                <p class="ai-reason">${s.reason}</p>
+                <button class="btn-icon btn-whatsapp" style="width: 100%; font-size: 0.8rem; margin-top: 0.5rem;" onclick="handleWhatsApp('${s.name.replace(/'/g, "\\'")}', '${s.contact}', '${encodeURIComponent(s.msg)}')">
+                    <i class="fa-brands fa-whatsapp"></i> Enviar Sugestão IA
+                </button>
+            `;
+            grid.appendChild(card);
+        });
+    }, 1200);
+}
+
+function handleWhatsApp(name, contact, customMsgEncoded = null) {
     if (!contact || contact.trim() === "") {
         alert(`O contato de ${name} não foi encontrado. Certifique-se de que o número está na coluna "Contato" ou "Observações" da planilha e clique em Sincronizar.`);
         return;
@@ -166,7 +234,10 @@ function handleWhatsApp(name, contact) {
 
     const client = allClients.find(c => c.nome === name);
     let waMsg = '';
-    if (client && client.totalPendente > 0) {
+
+    if (customMsgEncoded) {
+        waMsg = decodeURIComponent(customMsgEncoded);
+    } else if (client && client.totalPendente > 0) {
         waMsg = `Olá ${client.nome}, tudo bem? Passando para lembrar do seu docinho! Consta aqui um valor pendente de ${formatCurrency(client.totalPendente)} referentes às suas últimas compras de doces. Podemos acertar? 🍬`;
     } else {
         waMsg = `Olá ${name}! Percebi que temos novidades na doceria, venha conferir! 🎂`;

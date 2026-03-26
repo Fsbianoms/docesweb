@@ -198,6 +198,56 @@
         .history-meta {
             text-align: right;
         }
+
+        /* AI Suggestion Card Styles */
+        .ai-banner {
+            background: linear-gradient(135deg, rgba(247, 37, 133, 0.1), rgba(13, 240, 163, 0.1));
+            border: 1px solid var(--primary-color);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .ai-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .ai-tag {
+            background: var(--grad-1);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .ai-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .ai-card {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .ai-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.3rem;
+        }
+        .ai-reason {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -268,6 +318,24 @@
                 <div class="crm-metric">
                     <h3>Ticket Médio Geral</h3>
                     <p id="averageTicket" style="background: var(--grad-3); -webkit-background-clip: text; background-clip: text;">R$ 0,00</p>
+                </div>
+                <div class="crm-metric" style="border: 1px solid var(--primary-color); cursor: pointer;" onclick="runAiAnalysis()">
+                    <h3 style="color: var(--primary-color); font-weight: 700;"><i class="fa-solid fa-robot"></i> Inteligência de Vendas</h3>
+                    <p style="font-size: 1.2rem; background: var(--grad-1); -webkit-background-clip: text; background-clip: text;">Analisar Oportunidades</p>
+                </div>
+            </div>
+
+            <!-- AI Suggestions Banner -->
+            <div id="aiBanner" class="ai-banner">
+                <div class="ai-header">
+                    <div>
+                        <span class="ai-tag">DocesWeb AI Analyst</span>
+                        <h2 style="margin-top: 0.5rem;">Oportunidades de Venda Hoje 🍬</h2>
+                    </div>
+                    <button class="btn-icon" style="flex: none; padding: 0.4rem 1rem; background: rgba(255,255,255,0.1);" onclick="document.getElementById('aiBanner').style.display='none'">Fechar</button>
+                </div>
+                <div class="ai-grid" id="aiGrid">
+                    <!-- Gerado via JS -->
                 </div>
             </div>
 
